@@ -3,11 +3,21 @@ import { NavLink } from 'react-router'; // Fixed import
 import { useDispatch, useSelector } from 'react-redux';
 import axiosClient from '../utils/axiosClient';
 import { logoutUser } from '../authSlice';
+import { fetchProblems } from "../problemSlice";
 
 function Homepage() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const [problems, setProblems] = useState([]);
+  const [page, setPage] = useState(1);
+  //const [problems, setProblems] = useState([]);
+  //const dispatch = useDispatch();
+
+const {
+    problems,
+    currentPage,
+    totalPages,
+    loading
+} = useSelector(state => state.problem);
   const [solvedProblems, setSolvedProblems] = useState([]);
   const [filters, setFilters] = useState({
     difficulty: 'all',
@@ -15,28 +25,32 @@ function Homepage() {
     status: 'all' 
   });
 
-  useEffect(() => {
-    const fetchProblems = async () => {
-      try {
-        const { data } = await axiosClient.get('/problem/getAllProblem');
-        setProblems(data);
-      } catch (error) {
-        console.error('Error fetching problems:', error);
-      }
-    };
+ useEffect(() => {
+    dispatch(
+        fetchProblems({
+            page,
+            limit: 10,
+        })
+    );
+}, [dispatch, page]);
 
+useEffect(() => {
     const fetchSolvedProblems = async () => {
-      try {
-        const { data } = await axiosClient.get('/problem/problemSolvedByUser');
-        setSolvedProblems(data);
-      } catch (error) {
-        console.error('Error fetching solved problems:', error);
-      }
+        try {
+            const { data } = await axiosClient.get(
+                "/problem/problemSolvedByUser"
+            );
+
+            setSolvedProblems(data);
+        } catch (error) {
+            console.error("Error fetching solved problems:", error);
+        }
     };
 
-    fetchProblems();
-    if (user) fetchSolvedProblems();
-  }, [user]);
+    if (user) {
+        fetchSolvedProblems();
+    }
+}, [user]);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -50,6 +64,15 @@ function Homepage() {
                       solvedProblems.some(sp => sp._id === problem._id);
     return difficultyMatch && tagMatch && statusMatch;
   });
+
+
+  if (loading) {
+  return (
+    <div className="min-h-screen flex justify-center items-center">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -141,6 +164,31 @@ function Homepage() {
             </div>
           ))}
         </div>
+        {/* Pagination */}
+                  <div className="flex justify-center items-center gap-4 mt-8">
+
+             <button
+                className="btn"
+        disabled={page === 1}
+        onClick={() => setPage(prev => prev - 1)}
+    >
+        Previous
+    </button>
+
+    <span className="font-semibold">
+        Page {currentPage} of {totalPages}
+    </span>
+
+    <button
+        className="btn"
+        disabled={page === totalPages}
+        onClick={() => setPage(prev => prev + 1)}
+    >
+        Next
+    </button>
+
+</div>
+
       </div>
     </div>
   );
