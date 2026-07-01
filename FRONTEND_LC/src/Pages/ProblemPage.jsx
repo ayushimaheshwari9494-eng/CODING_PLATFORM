@@ -9,7 +9,8 @@ const ProblemPage = () => {
   const [problem, setProblem] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [code, setCode] = useState('');
-  //const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   //const [runResult, setRunResult] = useState(null);
   //const [submitResult, setSubmitResult] = useState(null);
   const [activeLeftTab, setActiveLeftTab] = useState('description');
@@ -219,53 +220,53 @@ const ProblemPage = () => {
   const handleLanguageChange = (language) => {
     setSelectedLanguage(language);
   };
-
-  const handleRun = async () => {
-    setLoading(true);
-    setRunResult(null);
+//COMMENTING CUZ JUDGE0 API NOT BOUGHT ABHI
+  // const handleRun = async () => {
+  //   setLoading(true);
+  //   setRunResult(null);
     
-    try {
-      const response = await axiosClient.post(`/submission/run/${problemId}`, {
-        code,
-        language: selectedLanguage
-      });
+  //   try {
+  //     const response = await axiosClient.post(`/submission/run/${problemId}`, {
+  //       code,
+  //       language: selectedLanguage
+  //     });
 
-      setRunResult(response.data);
-      setLoading(false);
-      setActiveRightTab('testcase');
+  //     setRunResult(response.data);
+  //     setLoading(false);
+  //     setActiveRightTab('testcase');
       
-    } catch (error) {
-      console.error('Error running code:', error);
-      setRunResult({
-        success: false,
-        error: 'Internal server error'
-      });
-      setLoading(false);
-      setActiveRightTab('testcase');
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error running code:', error);
+  //     setRunResult({
+  //       success: false,
+  //       error: 'Internal server error'
+  //     });
+  //     setLoading(false);
+  //     setActiveRightTab('testcase');
+  //   }
+  // };
 
-  const handleSubmitCode = async () => {
-    setLoading(true);
-    setSubmitResult(null);
+  // const handleSubmitCode = async () => {
+  //   setLoading(true);
+  //   setSubmitResult(null);
     
-    try {
-        const response = await axiosClient.post(`/submission/submit/${problemId}`, {
-        code:code,
-        language: selectedLanguage
-      });
+  //   try {
+  //       const response = await axiosClient.post(`/submission/submit/${problemId}`, {
+  //       code:code,
+  //       language: selectedLanguage
+  //     });
 
-       setSubmitResult(response.data);
-       setLoading(false);
-       setActiveRightTab('result');
+  //      setSubmitResult(response.data);
+  //      setLoading(false);
+  //      setActiveRightTab('result');
       
-    } catch (error) {
-      console.error('Error submitting code:', error);
-      setSubmitResult(null);
-      setLoading(false);
-      setActiveRightTab('result');
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error submitting code:', error);
+  //     setSubmitResult(null);
+  //     setLoading(false);
+  //     setActiveRightTab('result');
+  //   }
+  // };
 
   const getLanguageForMonaco = (lang) => {
     switch (lang) {
@@ -491,26 +492,38 @@ const ProblemPage = () => {
                   </button>
                 </div>
                 <div className="flex gap-2">
-                  <button
+                  {/* <button
                     className={`btn btn-outline btn-sm ${loading ? 'loading' : ''}`}
                     onClick={handleRun}
                     disabled={loading}
                   >
                     Run
-                  </button>
+                  </button> */}
                   <button
+    className="btn btn-outline btn-sm"
+    onClick={() => setShowComingSoon(true)}
+>
+    Run
+</button>
+                  {/* <button
                     className={`btn btn-primary btn-sm ${loading ? 'loading' : ''}`}
                     onClick={handleSubmitCode}
                     disabled={loading}
                   >
                     Submit
-                  </button>
+                  </button> */}
+                  <button
+    className="btn btn-primary btn-sm"
+    onClick={() => setShowComingSoon(true)}
+>
+    Submit
+</button>
                 </div>
               </div>
             </div>
           )}
 
-          {activeRightTab === 'testcase' && (
+          {/* {activeRightTab === 'testcase' && (
             <div className="flex-1 p-4 overflow-y-auto">
               <h3 className="font-semibold mb-4">Test Results</h3>
               {runResult ? (
@@ -564,9 +577,24 @@ const ProblemPage = () => {
                 </div>
               )}
             </div>
-          )}
+          )} */}
 
-          {activeRightTab === 'result' && (
+          {activeRightTab === "testcase" && (
+  <div className="flex-1 flex items-center justify-center">
+    <div className="text-center">
+      <h2 className="text-2xl font-bold mb-3">
+        🚀 Code Execution Coming Soon
+      </h2>
+
+      <p className="text-gray-400 max-w-md">
+        We are currently integrating our secure Online Judge.
+        Soon you'll be able to run your code against sample test cases instantly.
+      </p>
+    </div>
+  </div>
+)}
+
+          {/* {activeRightTab === 'result' && (
             <div className="flex-1 p-4 overflow-y-auto">
               <h3 className="font-semibold mb-4">Submission Result</h3>
               {submitResult ? (
@@ -597,11 +625,78 @@ const ProblemPage = () => {
                 </div>
               )}
             </div>
-          )}
+          )} */}
+          {activeRightTab === "result" && (
+  <div className="flex-1 flex items-center justify-center">
+    <div className="text-center">
+      <h2 className="text-2xl font-bold mb-3">
+        🎯 Submission Evaluation Coming Soon
+      </h2>
+
+      <p className="text-gray-400 max-w-md">
+        Automatic judging with hidden test cases, runtime,
+        memory usage and submission history will be available
+        in an upcoming update.
+      </p>
+    </div>
+  </div>
+)}
         </div>
       </div>
+       {/* =================== Modal =================== */}
+    {showComingSoon && (
+  <div className="modal modal-open">
+    <div className="modal-box max-w-lg">
+
+      <div className="text-center">
+
+        <div className="text-6xl mb-4">
+          🚀
+        </div>
+
+        <h2 className="text-3xl font-bold">
+          Online Judge Coming Soon
+        </h2>
+
+        <p className="py-5 text-gray-500">
+          We're actively building a secure code execution engine to
+          provide an experience similar to LeetCode.
+        </p>
+
+        <div className="bg-base-200 rounded-xl p-4 text-left">
+
+          <p className="font-semibold mb-3">
+            Upcoming Features
+          </p>
+
+          <ul className="space-y-2">
+            <li>✅ Run code instantly</li>
+            <li>✅ Hidden test case evaluation</li>
+            <li>✅ Runtime & Memory analysis</li>
+            <li>✅ Submission history</li>
+            <li>✅ Multi-language support</li>
+          </ul>
+
+        </div>
+
+        <div className="modal-action justify-center">
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowComingSoon(false)}
+          >
+            Got it
+          </button>
+        </div>
+
+      </div>
+
     </div>
-  );
+  </div>
+)}
+
+  </div>   
+);
+   
 };
 
 export default ProblemPage;
