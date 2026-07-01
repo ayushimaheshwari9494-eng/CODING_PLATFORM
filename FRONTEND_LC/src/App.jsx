@@ -1,11 +1,12 @@
 import {Routes, Route ,Navigate} from "react-router";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Homepage from "./pages/Homepage";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
+import Homepage from "./Pages/Homepage";
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from "./authSlice";
 import { useEffect } from "react";
-import AdminPanel from "./pages/AdminPanel";
+import AdminPanel from "./Pages/AdminPanel";
+import ProblemPage from "./Pages/ProblemPage";
 
 function App(){
   
@@ -31,15 +32,16 @@ function App(){
       <Route path="/" element={isAuthenticated ?<Homepage></Homepage>:<Navigate to="/signup" />}></Route>
       <Route path="/login" element={isAuthenticated?<Navigate to="/" />:<Login></Login>}></Route>
       <Route path="/signup" element={isAuthenticated?<Navigate to="/" />:<Signup></Signup>}></Route>
-       
-       <Route 
+      <Route path="/admin" element={<AdminPanel /> }></Route>
+       <Route path="/problem/:problemId" element={<ProblemPage/>}></Route>
+       {/* <Route 
         path="/admin" 
         element={
           isAuthenticated && user?.role === 'admin' ? 
             <AdminPanel /> : 
             <Navigate to="/" />
-        } 
-      /> 
+        }  */}
+      
     </Routes>
   </>
   )
